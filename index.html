@@ -2287,20 +2287,50 @@ function gerarTermoPDFBlob(download = false) {
 
   const hoje = new Date().toLocaleDateString("pt-BR");
 
-  doc.text(`Local e data: ${formData.cidade}/${formData.estado}, ${hoje}`, margem, y);
-  y += 12;
+doc.text(`Local e data: ${formData.cidade}/${formData.estado}, ${hoje}`, margem, y);
+y += 12;
 
-  doc.setFont("helvetica", "bold");
-  doc.text("Assinatura do solicitante:", margem, y);
-  y += 5;
+/* 
+  Garante espaço para assinatura, nome e rodapé.
+  Se não houver espaço suficiente, cria nova página.
+*/
+if (y > 210) {
+  doc.addPage();
+  y = 20;
+}
 
-  if (formData.assinaturaDataUrl) {
-    doc.addImage(formData.assinaturaDataUrl, "PNG", margem, y, 80, 35);
-    y += 40;
-  }
+doc.setFont("helvetica", "bold");
+doc.text("Assinatura do solicitante:", margem, y);
+y += 8;
 
-  doc.setFont("helvetica", "normal");
-  doc.line(margem, y, margem + 90, y);
+if (formData.assinaturaDataUrl) {
+  doc.addImage(formData.assinaturaDataUrl, "PNG", margem, y, 80, 32);
+  y += 36;
+}
+
+doc.setFont("helvetica", "normal");
+doc.line(margem, y, margem + 90, y);
+y += 7;
+
+const nomeAssinante = formData.nome_titular || "Solicitante";
+const nomeLinhas = doc.splitTextToSize(nomeAssinante, 90);
+doc.text(nomeLinhas, margem, y);
+y += nomeLinhas.length * 6 + 8;
+
+if (y > 270) {
+  doc.addPage();
+  y = 20;
+}
+
+doc.setFontSize(9);
+const textoAssinado = `Assinado eletronicamente no sistema Portabilidade ViaTec em ${new Date().toLocaleString("pt-BR")}.`;
+const textoAssinadoLinhas = doc.splitTextToSize(textoAssinado, 180);
+doc.text(textoAssinadoLinhas, margem, y);
+y += textoAssinadoLinhas.length * 5;
+
+doc.text(`Atendente responsável: ${usuarioLogado?.nome || ""}`, margem, y);
+y += 5;
+doc.text("Versão do termo: v1-2026", margem, y);
   y += 6;
   doc.text(formData.nome_titular || "Solicitante", margem, y);
 
