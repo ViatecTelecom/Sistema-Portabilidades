@@ -1237,50 +1237,7 @@ if (view === "usuarios") carregarUsuarios();
   document.getElementById("wizardMsg").innerHTML = "";
 }
 
-      function gerarResumoTexto(item = null) {
-  const dados = item || {
-    nome_titular: formData.nome_titular,
-    cpf_cnpj: formData.cpf_cnpj,
-    endereco: formData.endereco,
-    cidade: formData.cidade,
-    estado: formData.estado,
-    numero_linha: formData.numero_linha,
-    operadora_atual: formData.operadora_atual,
-    data_prevista_portabilidade: formData.data_prevista_portabilidade,
-    plano_contratado: formData.plano_contratado || "Não informado",
-    atendente_nome: usuarioLogado ? usuarioLogado.nome : "",
-    status: "Dados recebidos",
-    termo_aceito: formData.termo_aceito
-  };
-
-  return `Nova solicitação de portabilidade cadastrada:
-
-Cliente: ${dados.nome_titular || ""}
-CPF/CNPJ: ${dados.cpf_cnpj || ""}
-Endereço: ${dados.endereco || ""}
-Cidade/UF: ${dados.cidade || ""}/${dados.estado || ""}
-Número: ${dados.numero_linha || ""}
-Operadora atual: ${dados.operadora_atual || ""}
-Data prevista: ${formatDateOnly(dados.data_prevista_portabilidade)}
-Plano contratado: ${dados.plano_contratado || "Não informado"}
-Termo assinado: ${dados.termo_aceito ? "Sim" : "Não"}
-Atendente: ${dados.atendente_nome || ""}
-Status: ${dados.status || "Dados recebidos"}`;
-}
-      }
-      if (step.field === "estado") {
-  const select = document.getElementById("estado");
-  if (select) select.value = formData.estado || "";
-}
-
-      document.getElementById("btnVoltar").classList.toggle("hidden", currentStep === 0);
-      document.getElementById("btnProximo").classList.toggle("hidden", currentStep === steps.length - 1);
-      document.getElementById("btnFinalizar").classList.toggle("hidden", currentStep !== steps.length - 1);
-
-      document.getElementById("wizardMsg").innerHTML = "";
-    }
-
- function saveCurrentStep() {
+      function saveCurrentStep() {
   const step = steps[currentStep];
 
   if (step.field === "resumo") return true;
@@ -1314,6 +1271,17 @@ Status: ${dados.status || "Dados recebidos"}`;
   formData[step.field] = value;
   return true;
 }
+
+
+function nextStep() {
+  if (!saveCurrentStep()) return;
+
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    renderStep();
+  }
+}
+
 
     function prevStep() {
       saveCurrentStep();
@@ -1469,26 +1437,35 @@ assinaturaDesenhada = false;
     }
 
     function gerarResumoTexto(item = null) {
-      const dados = item || {
-        nome_titular: formData.nome_titular,
-        cpf_cnpj: formData.cpf_cnpj,
-        numero_linha: formData.numero_linha,
-        cidade: formData.cidade,
-        plano_contratado: formData.plano_contratado || "Não informado",
-        atendente_nome: usuarioLogado ? usuarioLogado.nome : "",
-        status: "Dados recebidos"
-      };
+  const dados = item || {
+    nome_titular: formData.nome_titular,
+    cpf_cnpj: formData.cpf_cnpj,
+    endereco: formData.endereco,
+    cidade: formData.cidade,
+    estado: formData.estado,
+    numero_linha: formData.numero_linha,
+    operadora_atual: formData.operadora_atual,
+    data_prevista_portabilidade: formData.data_prevista_portabilidade,
+    plano_contratado: formData.plano_contratado || "Não informado",
+    atendente_nome: usuarioLogado ? usuarioLogado.nome : "",
+    status: "Dados recebidos",
+    termo_aceito: formData.termo_aceito
+  };
 
-      return `Nova solicitação de portabilidade cadastrada:
+  return `Nova solicitação de portabilidade cadastrada:
 
 Cliente: ${dados.nome_titular || ""}
 CPF/CNPJ: ${dados.cpf_cnpj || ""}
+Endereço: ${dados.endereco || ""}
+Cidade/UF: ${dados.cidade || ""}/${dados.estado || ""}
 Número: ${dados.numero_linha || ""}
-Cidade: ${dados.cidade || ""}
+Operadora atual: ${dados.operadora_atual || ""}
+Data prevista: ${formatDateOnly(dados.data_prevista_portabilidade)}
 Plano contratado: ${dados.plano_contratado || "Não informado"}
+Termo assinado: ${dados.termo_aceito ? "Sim" : "Não"}
 Atendente: ${dados.atendente_nome || ""}
 Status: ${dados.status || "Dados recebidos"}`;
-    }
+}
 
     function copiarTexto(item) {
       const texto = gerarResumoTexto(item);
@@ -1850,21 +1827,6 @@ Status: ${dados.status || "Dados recebidos"}`;
   await carregarHistorico();
   await carregarDashboard();
 }
-
-      const { error } = await supabaseClient
-        .from("portabilidades")
-        .update(payload)
-        .eq("id", id);
-
-      if (error) {
-        document.getElementById("editMsg").innerHTML = `<div class="msg error">Erro ao salvar.</div>`;
-        return;
-      }
-
-      document.getElementById("editMsg").innerHTML = `<div class="msg success">Alterações salvas.</div>`;
-      await carregarHistorico();
-      await carregarDashboard();
-    }
 
     async function carregarUsuarios() {
       if (usuarioLogado?.perfil !== "admin") return;
