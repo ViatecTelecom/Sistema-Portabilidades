@@ -654,7 +654,7 @@
          <button id="menuNova" onclick="showView('nova')">Nova solicitação</button>
 <button id="menuMinhas" onclick="showView('minhas')">Minhas solicitações</button>
 <button id="menuDashboard" class="admin-only" onclick="showView('dashboard')">Dashboard</button>
-<button id="menuRecebidas" class="admin-only" onclick="showView('recebidas')">Solicitações recebidas</button>
+<button id="menuRecebidas" class="admin-only" onclick="showView('recebidas')">Em andamento</button>
 <button id="menuHistorico" class="admin-only" onclick="showView('historico')">Histórico geral</button>
 <button id="menuUsuarios" class="admin-only" onclick="showView('usuarios')">Usuários</button>
         </nav>
@@ -716,8 +716,8 @@
 <section id="viewRecebidas" class="view hidden admin-only">
   <div class="topbar">
     <div>
-      <h2>Solicitações recebidas</h2>
-      <p>Novas portabilidades aguardando envio ou tratamento pelo NOC.</p>
+      <h2>Solicitações em andamento</h2>
+<p>Portabilidades recebidas, enviadas ou com erro, até serem concluídas.</p>
     </div>
     <button class="btn btn-light" onclick="carregarRecebidas()">Atualizar</button>
   </div>
@@ -1694,11 +1694,15 @@ Status: ${dados.status || "Dados recebidos"}`;
 async function carregarRecebidas() {
   if (usuarioLogado?.perfil !== "admin") return;
 
-  const { data, error } = await supabaseClient
-    .from("portabilidades")
-    .select("*")
-    .eq("status", "Dados recebidos")
-    .order("criado_em", { ascending: false });
+ const { data, error } = await supabaseClient
+  .from("portabilidades")
+  .select("*")
+  .in("status", [
+    "Dados recebidos",
+    "Enviado para portabilidade",
+    "Erro"
+  ])
+  .order("criado_em", { ascending: false });
 
   const tbody = document.getElementById("recebidasTabela");
 
@@ -1708,7 +1712,7 @@ async function carregarRecebidas() {
   }
 
   if (!data || data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9">Nenhuma solicitação nova no momento.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9">Nenhuma portabilidade em andamento no momento.</td></tr>`;
     return;
   }
 
