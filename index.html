@@ -659,6 +659,37 @@
     grid-template-columns: 1fr;
   }
 }
+    .status-select {
+  border-radius: 999px;
+  font-weight: 900;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  min-width: 190px;
+}
+
+.status-select.dados {
+  background: #fef9c3;
+  color: #854d0e;
+  border-color: #fde68a;
+}
+
+.status-select.enviado {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.status-select.concluido {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.status-select.erro {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
     
   </style>
 </head>
@@ -2027,12 +2058,15 @@ async function carregarRecebidas() {
       <td>${escapeHTML(item.plano_contratado || "Não informado")}</td>
       <td>${escapeHTML(item.atendente_nome || "-")}</td>
       <td>
-        <select onchange="alterarStatusRecebida('${item.id}', this.value)">
-          <option value="Dados recebidos" selected>Dados recebidos</option>
-          <option value="Enviado para portabilidade">Enviado para portabilidade</option>
-          <option value="Portabilidade concluída">Portabilidade concluída</option>
-          <option value="Erro">Erro</option>
-        </select>
+       <select 
+  class="status-select ${statusClass(item.status)}"
+  onchange="alterarStatusRecebida('${item.id}', this.value)"
+>
+  <option value="Dados recebidos" ${item.status === "Dados recebidos" ? "selected" : ""}>Dados recebidos</option>
+  <option value="Enviado para portabilidade" ${item.status === "Enviado para portabilidade" ? "selected" : ""}>Enviado para portabilidade</option>
+  <option value="Portabilidade concluída" ${item.status === "Portabilidade concluída" ? "selected" : ""}>Portabilidade concluída</option>
+  <option value="Erro" ${item.status === "Erro" ? "selected" : ""}>Erro</option>
+</select>
       </td>
      <td>
   <div class="actions">
@@ -2060,6 +2094,7 @@ async function alterarStatusRecebida(id, novoStatus) {
   await carregarRecebidas();
   await carregarHistorico();
   await carregarDashboard();
+  await carregarMinhasSolicitacoes();
 }
 
     function renderTermoHTML() {
@@ -2371,6 +2406,13 @@ function formatDateOnly(dateString) {
   }
 
   return dateString;
+}
+
+    function statusClass(status) {
+  if (status === "Enviado para portabilidade") return "enviado";
+  if (status === "Portabilidade concluída") return "concluido";
+  if (status === "Erro") return "erro";
+  return "dados";
 }
     
     function statusBadge(status) {
