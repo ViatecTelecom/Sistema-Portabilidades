@@ -1190,35 +1190,52 @@ if (view === "usuarios") carregarUsuarios();
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    function renderStep() {
-      const stepper = document.getElementById("stepper");
-      stepper.innerHTML = "";
+  function renderStep() {
+  const stepper = document.getElementById("stepper");
+  stepper.innerHTML = "";
 
-      steps.forEach((_, index) => {
-        const dot = document.createElement("div");
-        dot.className = "step-dot" + (index <= currentStep ? " active" : "");
-        stepper.appendChild(dot);
-      });
+  steps.forEach((_, index) => {
+    const dot = document.createElement("div");
+    dot.className = "step-dot" + (index <= currentStep ? " active" : "");
+    stepper.appendChild(dot);
+  });
 
-      const step = steps[currentStep];
+  const step = steps[currentStep];
 
-      document.getElementById("stepTitle").textContent = step.title;
+  document.getElementById("stepTitle").textContent = step.title;
 
-if (step.field === "termo") {
-  document.getElementById("stepContent").innerHTML = renderTermoHTML();
-  setTimeout(setupAssinaturaCanvas, 100);
-} else {
-  document.getElementById("stepContent").innerHTML = step.html;
+  if (step.field === "termo") {
+    document.getElementById("stepContent").innerHTML = renderTermoHTML();
+    setTimeout(setupAssinaturaCanvas, 100);
+  } else {
+    document.getElementById("stepContent").innerHTML = step.html;
+  }
+
+  if (step.field !== "resumo" && step.field !== "anexoFile" && step.field !== "termo") {
+    const input = document.getElementById(step.field);
+    if (input) input.value = formData[step.field] || "";
+  }
+
+  if (step.field === "estado") {
+    const select = document.getElementById("estado");
+    if (select) select.value = formData.estado || "";
+  }
+
+  if (step.field === "plano_contratado") {
+    const inputPlano = document.getElementById("plano_contratado");
+    if (inputPlano) inputPlano.value = formData.plano_contratado || "";
+  }
+
+  if (step.field === "resumo") {
+    document.getElementById("resumoFinal").textContent = gerarResumoTexto();
+  }
+
+  document.getElementById("btnVoltar").classList.toggle("hidden", currentStep === 0);
+  document.getElementById("btnProximo").classList.toggle("hidden", currentStep === steps.length - 1);
+  document.getElementById("btnFinalizar").classList.toggle("hidden", currentStep !== steps.length - 1);
+
+  document.getElementById("wizardMsg").innerHTML = "";
 }
-
-      if (step.field !== "resumo" && step.field !== "anexoFile") {
-        const input = document.getElementById(step.field);
-        if (input) input.value = formData[step.field] || "";
-      }
-
-      if (step.field === "plano_contratado") {
-        document.getElementById("plano_contratado").value = formData.plano_contratado || "";
-      }
 
       function gerarResumoTexto(item = null) {
   const dados = item || {
