@@ -1147,6 +1147,291 @@ textarea:hover {
   }
 }
 
+
+/* =========================================================
+   MELHORIAS MOBILE - BOTÕES E USABILIDADE NO CELULAR
+   ========================================================= */
+@media (max-width: 920px) {
+  body {
+    background: #f3f6fb !important;
+  }
+
+  .layout {
+    display: block !important;
+  }
+
+  .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 30 !important;
+    height: auto !important;
+    padding: 12px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--cinza-borda) !important;
+    box-shadow: 0 8px 22px rgba(15, 35, 80, 0.08) !important;
+  }
+
+  .sidebar-logo {
+    margin-bottom: 10px !important;
+    padding: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .sidebar-logo img {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 14px !important;
+  }
+
+  .sidebar-logo strong {
+    font-size: 17px !important;
+  }
+
+  .user-box {
+    margin-bottom: 10px !important;
+    padding: 10px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .menu {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .menu button {
+    min-height: 48px !important;
+    padding: 12px 10px !important;
+    text-align: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+  }
+
+  .logout {
+    margin-top: 10px !important;
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+
+  .main {
+    padding: 14px !important;
+    overflow: visible !important;
+  }
+
+  .topbar {
+    gap: 12px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .topbar h2 {
+    font-size: 24px !important;
+    line-height: 1.1 !important;
+  }
+
+  .topbar p {
+    font-size: 14px !important;
+  }
+
+  .topbar .btn,
+  .topbar button {
+    width: 100% !important;
+  }
+
+  .card {
+    padding: 16px !important;
+    border-radius: 20px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .btn {
+    width: 100% !important;
+    min-height: 50px !important;
+    padding: 14px 16px !important;
+    border-radius: 15px !important;
+    font-size: 15px !important;
+    line-height: 1.1 !important;
+  }
+
+  .actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .actions .btn,
+  .actions a.btn,
+  .actions button {
+    width: 100% !important;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 50px !important;
+    font-size: 16px !important; /* evita zoom automático no iPhone */
+    border-radius: 15px !important;
+  }
+
+  .password-wrap {
+    gap: 8px !important;
+  }
+
+  .eye-btn {
+    width: 52px !important;
+    min-width: 52px !important;
+    height: 52px !important;
+  }
+
+  .stepper {
+    gap: 6px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .step-dot {
+    min-width: 28px !important;
+    height: 8px !important;
+  }
+
+  .step-title {
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+  }
+
+  .filter-card {
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .filter-head {
+    align-items: flex-start !important;
+  }
+
+  .filter-grid-minhas,
+  .filters {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .request-card {
+    border-radius: 18px !important;
+  }
+
+  .minha-card-head {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+    gap: 10px !important;
+  }
+
+  .minha-card-head .btn {
+    min-height: 46px !important;
+  }
+
+  .minha-main-title strong {
+    font-size: 16px !important;
+    white-space: normal !important;
+  }
+
+  .minha-mini-info {
+    font-size: 13px !important;
+  }
+
+  .minha-card-body {
+    padding: 14px !important;
+  }
+
+  .minha-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .minha-detail {
+    padding: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .table-wrap {
+    border-radius: 18px !important;
+  }
+
+  table {
+    min-width: 900px !important;
+  }
+
+  td .btn {
+    min-height: 38px !important;
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .modal-backdrop {
+    align-items: flex-end !important;
+    padding: 10px !important;
+  }
+
+  .modal {
+    max-height: 92vh !important;
+    border-radius: 24px 24px 18px 18px !important;
+    padding: 18px !important;
+  }
+
+  .modal-header {
+    position: sticky !important;
+    top: 0 !important;
+    background: #fff !important;
+    z-index: 2 !important;
+  }
+
+  .close-btn {
+    min-width: 46px !important;
+    height: 46px !important;
+  }
+
+  #signatureCanvas {
+    height: 220px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .menu {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .menu button {
+    font-size: 12px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .login-page {
+    padding: 14px !important;
+  }
+
+  .login-card {
+    padding: 24px 18px !important;
+    border-radius: 26px !important;
+  }
+
+  .brand img {
+    width: 88px !important;
+    height: 88px !important;
+  }
+
+  .brand h1 {
+    font-size: 24px !important;
+  }
+
+  .main {
+    padding: 12px !important;
+  }
+
+  .card {
+    padding: 14px !important;
+  }
+}
+
   </style>
 </head>
 
