@@ -2144,12 +2144,7 @@ let assinaturaDesenhada = false;
       </div>
     `
   },
-  {
-    title: "Termo de portabilidade",
-    field: "termo",
-    required: true,
-    html: ``
-  },
+ 
   {
     title: "Resumo final",
     field: "resumo",
@@ -2345,17 +2340,6 @@ if (view === "usuarios") carregarUsuarios();
 
   if (step.field === "resumo") return true;
 
-  if (step.field === "termo") {
-    salvarAssinaturaAtual();
-
-    if (!formData.assinaturaDataUrl) {
-      showWizardError("O cliente precisa assinar o termo para continuar.");
-      return false;
-    }
-
-    formData.termo_aceito = true;
-    return true;
-  }
 
   if (step.field === "anexoFile") {
     const fileInput = document.getElementById("anexoFile");
@@ -2503,12 +2487,14 @@ assinaturaUrl = assinaturaPublicData.publicUrl;
   plano_contratado: formData.plano_contratado || null,
   anexo_fatura_url: anexoUrl,
   anexo_fatura_nome: anexoNome,
-  termo_aceito: true,
+  termo_aceito: false,
   termo_pdf_url: termoPdfUrl,
   termo_pdf_nome: termoPdfNome,
   assinatura_url: assinaturaUrl,
-  assinado_em: new Date().toISOString(),
+  assinado_em: null,
   termo_versao: "v1-2026",
+  assinatura_tipo: "autentique",
+  autentique_status: "aguardando_envio",
   status: "Dados recebidos",
   atendente_id: usuarioLogado.id,
   atendente_nome: usuarioLogado.nome
@@ -3513,13 +3499,6 @@ function limparAssinatura() {
 }
 
 function baixarTermoPDF() {
-  salvarAssinaturaAtual();
-
-  if (!formData.assinaturaDataUrl) {
-    alert("O cliente precisa assinar antes de gerar o PDF.");
-    return;
-  }
-
   gerarTermoPDFBlob(true);
 }
 
