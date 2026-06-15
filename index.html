@@ -1579,6 +1579,23 @@ textarea:hover {
     margin-bottom: 0 !important;
   }
 }
+    /* Botão sair no final da página no celular */
+.logout-mobile-bottom {
+  display: none !important;
+}
+
+@media (max-width: 920px) {
+  .sidebar .logout {
+    display: none !important;
+  }
+
+  .logout-mobile-bottom {
+    display: flex !important;
+    width: 100% !important;
+    margin: 28px 0 18px 0 !important;
+    min-height: 52px !important;
+  }
+}
 
   </style>
 </head>
@@ -1852,6 +1869,7 @@ textarea:hover {
             </div>
           </div>
         </section>
+        <button class="btn btn-dark logout-mobile-bottom" onclick="logout()">Sair</button>
 
       </main>
     </section>
