@@ -2471,7 +2471,9 @@ let assinaturaUrl = null;
   <div class="actions">
     <button type="button" class="btn btn-light" onclick='copiarTexto(${JSON.stringify(data)})'>Copiar resumo</button>
     <button type="button" class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(data)})'>Gerar PDF</button>
-    ${data.whatsapp_cliente ? `<button type="button" class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(data)})'>WhatsApp cliente</button>` : ""}
+    ${data.assinatura_tipo === "autentique" && !data.autentique_document_id ? `<button type="button" class="btn btn-primary" onclick='enviarParaAutentique(${JSON.stringify(data)})'>Enviar para Autentique</button>` : ""}
+${data.autentique_assinatura_url ? `<a class="btn btn-light" href="${data.autentique_assinatura_url}" target="_blank">Abrir assinatura</a>` : ""}
+${data.whatsapp_cliente ? `<button type="button" class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(data)})'>WhatsApp cliente</button>` : ""}
     <button type="button" class="btn btn-green" onclick='notificarNOC(${JSON.stringify(data)})'>Notificar NOC</button>
     <button type="button" class="btn btn-dark" onclick="novaSolicitacao()">Nova solicitação</button>
   </div>
@@ -2551,6 +2553,88 @@ Status: ${dados.status || "Dados recebidos"}`;
   return String(numero || "").replace(/\D/g, "");
 }
 
+    async function enviarParaAutentique(item) {
+  if (!item || !item.id) {
+    alert("Solicitação inválida.");
+    return;
+  }
+
+  const confirmar = confirm(`Enviar o termo de portabilidade de ${item.nome_titular || "cliente"} para a Autentique?`);
+
+  if (!confirmar) return;
+
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("enviar-autentique", {
+      body: {
+        id: item.id
+      }
+    });
+
+    if (error) {
+      console.error("Erro Edge Function:", error);
+      alert("Erro ao chamar a função da Autentique.");
+      return;
+    }
+
+    if (!data?.ok) {
+      console.error("Resposta Autentique:", data);
+      alert(data?.error || "Erro ao enviar para Autentique.");
+      return;
+    }
+
+    alert("Documento enviado para Autentique com sucesso!");
+
+    await carregarMinhasSolicitacoes();
+    await carregarEmAndamento();
+    await carregarHistorico();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro inesperado ao enviar para Autentique.");
+  }
+}
+
+    async function enviarParaAutentique(item) {
+  if (!item || !item.id) {
+    alert("Solicitação inválida.");
+    return;
+  }
+
+  const confirmar = confirm(`Enviar o termo de portabilidade de ${item.nome_titular || "cliente"} para a Autentique?`);
+
+  if (!confirmar) return;
+
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("enviar-autentique", {
+      body: {
+        id: item.id
+      }
+    });
+
+    if (error) {
+      console.error("Erro Edge Function:", error);
+      alert("Erro ao chamar a função da Autentique.");
+      return;
+    }
+
+    if (!data?.ok) {
+      console.error("Resposta Autentique:", data);
+      alert(data?.error || "Erro ao enviar para Autentique.");
+      return;
+    }
+
+    alert("Documento enviado para Autentique com sucesso!");
+
+    await carregarMinhasSolicitacoes();
+    await carregarEmAndamento();
+    await carregarHistorico();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro inesperado ao enviar para Autentique.");
+  }
+}
+
 function enviarWhatsAppCliente(item) {
   const numero = limparNumeroWhatsApp(item.whatsapp_cliente);
 
@@ -2558,6 +2642,7 @@ function enviarWhatsAppCliente(item) {
     alert("Este cliente não possui WhatsApp cadastrado.");
     return;
   }
+  
 
   let numeroFinal = numero;
 
@@ -2565,7 +2650,7 @@ function enviarWhatsAppCliente(item) {
     numeroFinal = "55" + numeroFinal;
   }
 
-  const texto = `Olá, tudo bem?
+   const texto = `Olá, tudo bem?
 
 Aqui é da ViaTec. Recebemos sua solicitação de portabilidade da linha fixa.
 
