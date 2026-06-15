@@ -3543,23 +3543,46 @@ function gerarTermoPDFBlob(download = false) {
   doc.text("Assinatura do solicitante:", margem, y);
   y += 5;
 
-  if (formData.assinaturaDataUrl) {
-    doc.addImage(formData.assinaturaDataUrl, "PNG", margem, y, 80, 35);
-    y += 40;
+ function garantirEspaco(alturaNecessaria) {
+  if (y + alturaNecessaria > 280) {
+    doc.addPage();
+    y = 20;
   }
+}
 
-  doc.setFont("helvetica", "normal");
-  doc.line(margem, y, margem + 90, y);
-  y += 6;
-  doc.text(formData.nome_titular || "Solicitante", margem, y);
+garantirEspaco(75);
 
-  y += 10;
-  doc.setFontSize(9);
-  doc.text(`Assinado eletronicamente no sistema Portabilidade ViaTec em ${new Date().toLocaleString("pt-BR")}.`, margem, y);
-  y += 5;
-  doc.text(`Atendente responsável: ${usuarioLogado?.nome || ""}`, margem, y);
-  y += 5;
-  doc.text("Versão do termo: v1-2026", margem, y);
+if (formData.assinaturaDataUrl) {
+  doc.addImage(formData.assinaturaDataUrl, "PNG", margem, y, 80, 35);
+  y += 40;
+}
+
+doc.setFont("helvetica", "normal");
+doc.line(margem, y, margem + 90, y);
+y += 6;
+
+const nomeAssinante = formData.nome_titular || "Solicitante";
+const nomeQuebrado = doc.splitTextToSize(nomeAssinante, 170);
+
+garantirEspaco(nomeQuebrado.length * 6 + 25);
+
+doc.setFontSize(10);
+doc.text(nomeQuebrado, margem, y);
+y += nomeQuebrado.length * 6 + 4;
+
+doc.setFontSize(9);
+
+const textoAssinatura = `Assinado eletronicamente no sistema Portabilidade ViaTec em ${new Date().toLocaleString("pt-BR")}.`;
+const textoAssinaturaQuebrado = doc.splitTextToSize(textoAssinatura, 175);
+
+garantirEspaco(textoAssinaturaQuebrado.length * 5 + 15);
+
+doc.text(textoAssinaturaQuebrado, margem, y);
+y += textoAssinaturaQuebrado.length * 5;
+
+doc.text(`Atendente responsável: ${usuarioLogado?.nome || ""}`, margem, y);
+y += 5;
+doc.text("Versão do termo: v1-2026", margem, y);
 
   if (download) {
     doc.save(`termo-portabilidade-${limparNomeArquivo(formData.nome_titular)}.pdf`);
