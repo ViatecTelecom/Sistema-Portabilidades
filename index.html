@@ -1974,6 +1974,7 @@ textarea:hover {
    const formData = {
   nome_titular: "",
   cpf_cnpj: "",
+  whatsapp_cliente: "",
   endereco: "",
   cidade: "",
   estado: "",
@@ -2011,6 +2012,18 @@ let assinaturaDesenhada = false;
       </div>
     `
   },
+   {
+  title: "WhatsApp do cliente",
+  field: "whatsapp_cliente",
+  required: false,
+  html: `
+    <div class="form-group">
+      <label>WhatsApp do cliente</label>
+      <input id="whatsapp_cliente" placeholder="Ex: 55 99999-9999" oninput="mascaraTelefone(this)">
+      <p class="small">Opcional. Será usado para enviar mensagens sobre a portabilidade.</p>
+    </div>
+  `
+},
   {
     title: "Endereço",
     field: "endereco",
@@ -2480,6 +2493,7 @@ assinaturaUrl = assinaturaPublicData.publicUrl;
        const payload = {
   nome_titular: formData.nome_titular,
   cpf_cnpj: formData.cpf_cnpj,
+  whatsapp_cliente: formData.whatsapp_cliente || null,
   endereco: formData.endereco,
   cidade: formData.cidade,
   estado: formData.estado,
@@ -2547,6 +2561,7 @@ assinaturaDesenhada = false;
   const dados = item || {
     nome_titular: formData.nome_titular,
     cpf_cnpj: formData.cpf_cnpj,
+    whatsapp_cliente: formData.whatsapp_cliente || "",
     endereco: formData.endereco,
     cidade: formData.cidade,
     estado: formData.estado,
@@ -2563,6 +2578,7 @@ assinaturaDesenhada = false;
 
 Cliente: ${dados.nome_titular || ""}
 CPF/CNPJ: ${dados.cpf_cnpj || ""}
+WhatsApp cliente: ${dados.whatsapp_cliente || "Não informado"}
 Endereço: ${dados.endereco || ""}
 Cidade/UF: ${dados.cidade || ""}/${dados.estado || ""}
 Número: ${dados.numero_linha || ""}
@@ -2586,6 +2602,37 @@ Status: ${dados.status || "Dados recebidos"}`;
       const url = `https://wa.me/${NOC_WHATSAPP}?text=${texto}`;
       window.open(url, "_blank");
     }
+    function limparNumeroWhatsApp(numero) {
+  return String(numero || "").replace(/\D/g, "");
+}
+
+function enviarWhatsAppCliente(item) {
+  const numero = limparNumeroWhatsApp(item.whatsapp_cliente);
+
+  if (!numero) {
+    alert("Este cliente não possui WhatsApp cadastrado.");
+    return;
+  }
+
+  let numeroFinal = numero;
+
+  if (!numeroFinal.startsWith("55")) {
+    numeroFinal = "55" + numeroFinal;
+  }
+
+  const texto = `Olá, tudo bem?
+
+Aqui é da ViaTec. Recebemos sua solicitação de portabilidade da linha fixa.
+
+Cliente: ${item.nome_titular || ""}
+Linha a portar: ${item.numero_linha || ""}
+Status: ${item.status || "Dados recebidos"}
+
+Assim que houver atualização, entraremos em contato por aqui.`;
+
+  const url = `https://wa.me/${numeroFinal}?text=${encodeURIComponent(texto)}`;
+  window.open(url, "_blank");
+}
 
     function gerarPDF(item) {
       const { jsPDF } = window.jspdf;
@@ -2731,13 +2778,13 @@ Status: ${dados.status || "Dados recebidos"}`;
               ${item.observacao ? escapeHTML(item.observacao) : "Sem observação"}
             </div>
 
-            <div class="actions">
-              <button class="btn btn-light" onclick='copiarTexto(${JSON.stringify(item)})'>Copiar</button>
-              <button class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(item)})'>PDF</button>
-              ${item.termo_pdf_url ? `<a class="btn btn-green" href="${item.termo_pdf_url}" target="_blank">Termo</a>` : ""}
-              <button class="btn btn-green" onclick='notificarNOC(${JSON.stringify(item)})'>Notificar NOC</button>
-            </div>
-          </div>
+           <div class="actions">
+        <button class="btn btn-light" onclick='copiarTexto(${JSON.stringify(item)})'>Copiar</button>
+        <button class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(item)})'>PDF</button>
+        ${item.termo_pdf_url ? `<a class="btn btn-green" href="${item.termo_pdf_url}" target="_blank">Termo</a>` : ""}
+        ${item.whatsapp_cliente ? `<button class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(item)})'>WhatsApp cliente</button>` : ""}
+        <button class="btn btn-green" onclick='notificarNOC(${JSON.stringify(item)})'>Notificar NOC</button>
+        </div>
         </div>
       `).join("");
     }
