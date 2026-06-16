@@ -2473,7 +2473,7 @@ let assinaturaUrl = null;
     <button type="button" class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(data)})'>Gerar PDF</button>
     ${data.assinatura_tipo === "autentique" && !data.autentique_document_id ? `<button type="button" class="btn btn-primary" onclick='enviarParaAutentique(${JSON.stringify(data)})'>Enviar para Autentique</button>` : ""}
 ${data.autentique_assinatura_url ? `<a class="btn btn-light" href="${data.autentique_assinatura_url}" target="_blank">Abrir assinatura</a>` : ""}
-${data.whatsapp_cliente ? `<button type="button" class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(data)})'>Enviar link para assinatura</button>` : ""}
+${data.whatsapp_cliente && data.autentique_assinatura_url ? `<button type="button" class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(data)})'>Enviar link para assinatura</button>` : ""}
     <button type="button" class="btn btn-green" onclick='notificarNOC(${JSON.stringify(data)})'>Notificar NOC</button>
     <button type="button" class="btn btn-dark" onclick="novaSolicitacao()">Nova solicitação</button>
   </div>
@@ -2862,7 +2862,7 @@ Após assinar, daremos andamento à solicitação de portabilidade.`;
         <button class="btn btn-light" onclick='copiarTexto(${JSON.stringify(item)})'>Copiar</button>
         <button class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(item)})'>PDF</button>
         ${item.termo_pdf_url ? `<a class="btn btn-green" href="${item.termo_pdf_url}" target="_blank">Termo</a>` : ""}
-        ${item.whatsapp_cliente ? `<button class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(item)})'>Enviar link para assinatura</button>` : ""}
+        ${item.whatsapp_cliente && item.autentique_assinatura_url ? `<button class="btn btn-green" onclick='enviarWhatsAppCliente(${JSON.stringify(item)})'>Enviar link para assinatura</button>` : ""}
         <button class="btn btn-green" onclick='notificarNOC(${JSON.stringify(item)})'>Notificar NOC</button>
         </div>
         </div>
