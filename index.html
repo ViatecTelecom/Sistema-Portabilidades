@@ -2468,7 +2468,7 @@ let assinaturaUrl = null;
 
         msg.innerHTML = `
   <div class="msg success">Solicitação cadastrada com sucesso!</div>
-  <div class="actions">
+  <div class="actions" id="acoesSucessoSolicitacao">
     <button type="button" class="btn btn-light" onclick='copiarTexto(${JSON.stringify(data)})'>Copiar resumo</button>
     <button type="button" class="btn btn-primary" onclick='gerarPDF(${JSON.stringify(data)})'>Gerar PDF</button>
     ${data.assinatura_tipo === "autentique" && !data.autentique_document_id ? `<button type="button" class="btn btn-primary" onclick='enviarParaAutentique(${JSON.stringify(data)})'>Enviar para Autentique</button>` : ""}
@@ -2553,6 +2553,34 @@ Status: ${dados.status || "Dados recebidos"}`;
   return String(numero || "").replace(/\D/g, "");
 }
 
+    function mostrarBotaoEnviarLinkAssinatura(item) {
+  const area = document.getElementById("acoesSucessoSolicitacao");
+
+  if (!area) return;
+
+  if (!item?.whatsapp_cliente || !item?.autentique_assinatura_url) return;
+
+  if (document.getElementById("btnEnviarLinkAssinaturaSucesso")) return;
+
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.id = "btnEnviarLinkAssinaturaSucesso";
+  botao.className = "btn btn-green";
+  botao.textContent = "Enviar link para assinatura";
+  botao.onclick = function () {
+    enviarWhatsAppCliente(item);
+  };
+
+  const botaoNovaSolicitacao = area.querySelector("button.btn-dark");
+
+  if (botaoNovaSolicitacao) {
+    area.insertBefore(botao, botaoNovaSolicitacao);
+  } else {
+    area.appendChild(botao);
+  }
+}
+
+    
 async function enviarParaAutentique(item) {
   if (!item || !item.id) {
     alert("Solicitação inválida.");
@@ -2602,6 +2630,8 @@ async function enviarParaAutentique(item) {
 
   alert("Documento enviado para Autentique com sucesso!");
 
+  mostrarBotaoEnviarLinkAssinatura(itemAtualizado);
+
   if (itemAtualizado.autentique_assinatura_url && itemAtualizado.whatsapp_cliente) {
     const enviarAgora = confirm("Deseja enviar o link de assinatura para o cliente pelo WhatsApp agora?");
 
@@ -2640,47 +2670,6 @@ async function enviarParaAutentique(item) {
   }
 }
 
-    async function enviarParaAutentique(item) {
-  if (!item || !item.id) {
-    alert("Solicitação inválida.");
-    return;
-  }
-
-  const confirmar = confirm(`Enviar o termo de portabilidade de ${item.nome_titular || "cliente"} para a Autentique?`);
-
-  if (!confirmar) return;
-
-  try {
-    const { data, error } = await supabaseClient.functions.invoke("enviar-autentique", {
-      body: {
-        id: item.id
-      }
-    });
-
-    if (error) {
-      console.error("Erro Edge Function:", error);
-      alert("Erro ao chamar a função da Autentique.");
-      return;
-    }
-
-    if (!data?.ok) {
-      console.error("Resposta Autentique:", data);
-      alert(data?.error || "Erro ao enviar para Autentique.");
-      return;
-    }
-
-    alert("Documento enviado para Autentique com sucesso!");
-
-    await carregarMinhasSolicitacoes();
-    await carregarEmAndamento();
-    await carregarHistorico();
-
-  } catch (err) {
-    console.error(err);
-    alert("Erro inesperado ao enviar para Autentique.");
-  }
-}
-
 function enviarWhatsAppCliente(item) {
   const numero = limparNumeroWhatsApp(item.whatsapp_cliente);
 
@@ -2708,11 +2697,6 @@ if (numeroFinal.length === 10 || numeroFinal.length === 11) {
 // Se ainda não começar com 55, adiciona Brasil
 if (!numeroFinal.startsWith("55")) {
   numeroFinal = "55" + numeroFinal;
-}
-
-if (!item.autentique_assinatura_url) {
-  alert("O link de assinatura ainda não foi gerado. Primeiro clique em 'Enviar para Autentique'.");
-  return;
 }
 
 const texto = `Olá, tudo bem?
