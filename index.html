@@ -2553,7 +2553,7 @@ Status: ${dados.status || "Dados recebidos"}`;
   return String(numero || "").replace(/\D/g, "");
 }
 
-    async function enviarParaAutentique(item) {
+async function enviarParaAutentique(item) {
   if (!item || !item.id) {
     alert("Solicitação inválida.");
     return;
@@ -2582,11 +2582,33 @@ Status: ${dados.status || "Dados recebidos"}`;
       return;
     }
 
+    const itemAtualizado = {
+      ...item,
+      autentique_document_id: data.document_id || item.autentique_document_id,
+      autentique_assinatura_url: data.assinatura_url || item.autentique_assinatura_url,
+      autentique_documento_url: data.documento_url || item.autentique_documento_url,
+      autentique_status: "enviado"
+    };
+
     alert("Documento enviado para Autentique com sucesso!");
 
+    if (itemAtualizado.autentique_assinatura_url && itemAtualizado.whatsapp_cliente) {
+      const enviarZap = confirm("Deseja enviar o link de assinatura pelo WhatsApp do cliente agora?");
+
+      if (enviarZap) {
+        enviarWhatsAppCliente(itemAtualizado);
+      }
+    }
+
     await carregarMinhasSolicitacoes();
-    await carregarEmAndamento();
-    await carregarHistorico();
+
+    if (typeof carregarEmAndamento === "function") {
+      await carregarEmAndamento();
+    }
+
+    if (typeof carregarHistorico === "function") {
+      await carregarHistorico();
+    }
 
   } catch (err) {
     console.error(err);
