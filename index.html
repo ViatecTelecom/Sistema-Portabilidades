@@ -2632,18 +2632,9 @@ async function enviarParaAutentique(item) {
 
   mostrarBotaoEnviarLinkAssinatura(itemAtualizado);
 
-  if (itemAtualizado.autentique_assinatura_url && itemAtualizado.whatsapp_cliente) {
-    const enviarAgora = confirm("Deseja enviar o link de assinatura para o cliente pelo WhatsApp agora?");
+alert("Documento enviado para Autentique com sucesso!");
 
-    if (enviarAgora) {
-      try {
-        enviarWhatsAppCliente(itemAtualizado);
-      } catch (zapErro) {
-        console.warn("Documento enviado, mas houve erro ao abrir WhatsApp:", zapErro);
-        alert("Documento enviado. Não consegui abrir o WhatsApp automaticamente, mas o link foi salvo no sistema.");
-      }
-    }
-  }
+mostrarBotaoEnviarLinkAssinatura(itemAtualizado);
 
   try {
     if (typeof carregarMinhasSolicitacoes === "function") {
