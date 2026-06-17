@@ -1667,6 +1667,37 @@ textarea:hover {
     width: 100% !important;
   }
 }
+
+    .tabs-minhas {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0 8px;
+  flex-wrap: wrap;
+}
+
+.tab-minhas {
+  border: 1px solid #d7e3f8;
+  background: #f8fbff;
+  color: #003f91;
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-minhas:hover {
+  background: #eef5ff;
+}
+
+.tab-minhas.active {
+  background: #0b63f6;
+  color: #fff;
+  border-color: #0b63f6;
+  box-shadow: 0 10px 20px rgba(11, 99, 246, 0.18);
+}
+
+    
 </style>
 </head>
 
@@ -1776,6 +1807,17 @@ textarea:hover {
                   oninput="renderMinhasSolicitacoes()"
                 >
               </div>
+              </div>
+
+<div class="tabs-minhas">
+  <button type="button" id="abaMinhasAndamento" class="tab-minhas active" onclick="trocarAbaMinhasSolicitacoes('andamento')">
+    Em andamento
+  </button>
+
+  <button type="button" id="abaMinhasFinalizadas" class="tab-minhas" onclick="trocarAbaMinhasSolicitacoes('finalizadas')">
+    Finalizadas
+  </button>
+</div>
 
               <div class="minhas-toolbar-actions-mobile">
                 <button type="button" class="btn btn-light btn-toolbar" onclick="setFiltroMesAtual()">Este mês</button>
@@ -1966,6 +2008,7 @@ textarea:hover {
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let usuarioLogado = null;
+    let filtroMinhasSolicitacoes = "andamento";
     let currentStep = 0;
     let historicoCache = [];
     let usuariosCache = [];
@@ -2810,6 +2853,12 @@ Após assinar, daremos andamento à solicitação de portabilidade.`;
       doc.save(`portabilidade-${limparNomeArquivo(item.nome_titular || "cliente")}.pdf`);
     }
 
+function trocarAbaMinhasSolicitacoes(tipo) {
+  filtroMinhasSolicitacoes = tipo;
+  carregarMinhasSolicitacoes();
+}
+    
+    
     async function carregarMinhasSolicitacoes() {
       if (!usuarioLogado) return;
 
@@ -2841,6 +2890,26 @@ Após assinar, daremos andamento à solicitação de portabilidade.`;
       const dataFim = document.getElementById("minhasDataFim")?.value || "";
 
       let lista = [...minhasCache];
+
+      const statusFinalizados = ["Portabilidade concluída", "Cancelada"];
+
+lista = lista.filter((item) => {
+  const finalizada = statusFinalizados.includes(item.status);
+
+  if (filtroMinhasSolicitacoes === "finalizadas") {
+    return finalizada;
+  }
+
+  return !finalizada;
+});
+
+const abaAndamento = document.getElementById("abaMinhasAndamento");
+const abaFinalizadas = document.getElementById("abaMinhasFinalizadas");
+
+if (abaAndamento && abaFinalizadas) {
+  abaAndamento.classList.toggle("active", filtroMinhasSolicitacoes === "andamento");
+  abaFinalizadas.classList.toggle("active", filtroMinhasSolicitacoes === "finalizadas");
+}
 
       if (busca) {
         lista = lista.filter(item =>
