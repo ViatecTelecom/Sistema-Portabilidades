@@ -1715,6 +1715,97 @@ textarea:hover {
   width: 100%;
 }
 
+    .minhas-toolbar {
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.minhas-toolbar-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.minhas-search {
+  width: 100%;
+}
+
+.minhas-search input {
+  width: 100%;
+}
+
+.tabs-minhas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.tab-minhas {
+  border: 1px solid #d7e3f8;
+  background: #f8fbff;
+  color: #003f91;
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 9px 15px;
+  cursor: pointer;
+  transition: 0.2s;
+  min-height: 42px;
+}
+
+.tab-minhas:hover {
+  background: #eef5ff;
+}
+
+.tab-minhas.active {
+  background: #0b63f6;
+  color: #fff;
+  border-color: #0b63f6;
+  box-shadow: 0 8px 16px rgba(11, 99, 246, 0.16);
+}
+
+.periodo-minhas-box {
+  position: static !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed #d8e4f7;
+  border-radius: 16px;
+  background: #f8fbff;
+}
+
+.periodo-minhas-box.hidden {
+  display: none !important;
+}
+
+.periodo-minhas-box .form-group {
+  margin: 0;
+}
+
+.periodo-minhas-box input {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .periodo-minhas-box {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-minhas {
+    gap: 6px;
+  }
+
+  .tab-minhas,
+  .btn-toolbar,
+  .btn-refresh-mini {
+    flex: 1;
+    min-width: 120px;
+  }
+}
     
 </style>
 </head>
@@ -1816,45 +1907,51 @@ textarea:hover {
             </div>
           </div>
 
-          <div class="minhas-toolbar">
-            <div class="minhas-toolbar-main">
-              <div class="minhas-search">
-                <input
-                  id="minhasBusca"
-                  placeholder="Buscar por nome, CPF, número ou cidade..."
-                  oninput="renderMinhasSolicitacoes()"
-                >
-              </div>
-              </div>
+         <div class="minhas-toolbar">
+  <div class="minhas-toolbar-main">
+    <div class="minhas-search">
+      <input
+        id="minhasBusca"
+        placeholder="Buscar por nome, CPF, número ou cidade..."
+        oninput="renderMinhasSolicitacoes()"
+      >
+    </div>
 
-<div class="tabs-minhas">
-  <button type="button" id="abaMinhasAndamento" class="tab-minhas active" onclick="trocarAbaMinhasSolicitacoes('andamento')">
-    Em andamento
-  </button>
+    <div class="tabs-minhas">
+      <button type="button" id="abaMinhasAndamento" class="tab-minhas active" onclick="trocarAbaMinhasSolicitacoes('andamento')">
+        Em andamento
+      </button>
 
-  <button type="button" id="abaMinhasFinalizadas" class="tab-minhas" onclick="trocarAbaMinhasSolicitacoes('finalizadas')">
-    Finalizadas
-  </button>
+      <button type="button" id="abaMinhasFinalizadas" class="tab-minhas" onclick="trocarAbaMinhasSolicitacoes('finalizadas')">
+        Finalizadas
+      </button>
+
+      <button type="button" class="btn btn-light btn-toolbar" onclick="togglePeriodoMinhas()">
+        Filtro
+      </button>
+
+      <button type="button" class="btn btn-primary btn-refresh-mini" title="Atualizar" onclick="carregarMinhasSolicitacoes()">
+        ↻
+      </button>
+    </div>
+  </div>
+
+  <div id="periodoMinhasBox" class="periodo-minhas-box hidden">
+    <div class="form-group">
+      <label>Data inicial</label>
+      <input type="date" id="minhasDataInicio" onchange="renderMinhasSolicitacoes()">
+    </div>
+
+    <div class="form-group">
+      <label>Data final</label>
+      <input type="date" id="minhasDataFim" onchange="renderMinhasSolicitacoes()">
+    </div>
+
+    <button type="button" class="btn btn-light" onclick="limparPeriodoMinhas()">
+      Limpar filtros
+    </button>
+  </div>
 </div>
-
-                <button type="button" class="btn btn-light btn-toolbar" onclick="togglePeriodoMinhas()">Filtro</button>
-                <button type="button" class="btn btn-primary btn-refresh-mini" title="Atualizar" onclick="carregarMinhasSolicitacoes()">↻</button>
-              </div>
-            </div>
-
-            <div id="periodoMinhasBox" class="periodo-minhas-box hidden">
-              <div class="form-group">
-                <label>Data inicial</label>
-                <input id="minhasDataInicio" type="date" onchange="renderMinhasSolicitacoes()">
-              </div>
-
-              <div class="form-group">
-                <label>Data final</label>
-                <input id="minhasDataFim" type="date" onchange="renderMinhasSolicitacoes()">
-              </div>
-
-              <button type="button" class="btn btn-light" onclick="limparFiltrosMinhas()">Limpar filtros</button>
-            </div>
 
             <p id="minhasFiltroResumo" class="mini-count"></p>
           </div>
